@@ -1,0 +1,28 @@
+function [depth_list,binMean] = bin_data_by_depth(depth_data,other_data,bin_range,string_title_descriptor,string_ylabel)
+%N2Arsat_binned_depth Creates a plot of data v depth binned by the range
+%you provide and returns the binned data
+%   Assumes a maximum depth of <5000m. If you provide a range of 100 m the
+%   plot will have points at 50, 150 m etc.
+
+string=strcat(string_title_descriptor,'---Binned every',' ',num2str(bin_range),'m')
+
+num_bins=5000/bin_range;
+bin_list=linspace(0,5000,num_bins+1);
+depth_list=linspace(bin_range/2,5000-bin_range/2,num_bins);
+[h,whichBin]=histc(depth_data,bin_list);
+for i=1:num_bins
+    flagBinMembers=(whichBin==i);
+    binMembers=N2Arsat_data(flagBinMembers);
+    binMean(i)=mean(binMembers);
+end
+
+figure
+plot(binMean,depth_list,'x');
+set(gca,'YDir','reverse')
+ylabel('Depth')
+xlabel(string_ylabel)
+title(string)
+set(findall(gca,'type','text'),'fontSize',14)
+set(findall(gcf,'type','axes'),'fontSize',14)
+
+end
